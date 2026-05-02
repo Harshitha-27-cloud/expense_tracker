@@ -1,0 +1,213 @@
+<div class="app-wrapper">
+
+  <!-- ── Top bar ── -->
+  <div class="top-bar">
+    <span class="top-bar-title">Expenses</span>
+    <button class="add-btn" (click)="openAddModal()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M7 1v12M1 7h12"/>
+      </svg>
+      Add Expense
+    </button>
+  </div>
+
+  <!-- ── Filters ── -->
+  <div class="filters-bar">
+    <div class="flt-group">
+      <span class="flt-label">Category</span>
+      <select class="flt-select" [(ngModel)]="activeFilter" (change)="setFilter(activeFilter)">
+        <option value="All">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c.name">{{ c.name }}</option>
+      </select>
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Date Range</span>
+      <div class="date-range-row">
+        <input class="flt-date" type="date" [(ngModel)]="dateFrom" (change)="applyDateFilter()"/>
+        <span class="date-sep">-</span>
+        <input class="flt-date" type="date" [(ngModel)]="dateTo" (change)="applyDateFilter()"/>
+        <button class="reset-btn" (click)="resetFilters()" title="Reset filters">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 2.6-6.36L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Table ── -->
+  <div class="table-wrap desk-only">
+    <table>
+      <thead>
+        <tr>
+          <th class="c-tit">id</th>
+          <th class="c-cat">Tittle</th>
+          <th class="c-amt">Amount</th>
+          <th class="c-dat">Date</th>
+          <th class="c-dsc">Description</th>
+          <th class="c-act">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+          <tr><td colspan="7" class="empty-row">Loading expenses...</td></tr>
+        } @else if (displayedExpenses().length === 0) {
+          <tr><td colspan="7" class="empty-row">No expenses found</td></tr>
+        }
+        @for (exp of displayedExpenses(); track exp.id; let i = $index) {
+          <tr [class.row-editing]="editingId === exp.id">
+            <td class="t-num">{{ i + 1 }}.</td>
+            <td class="t-title" [class.editing-hl]="editingId === exp.id">{{ exp.title }}</td>
+            <td>
+              <span class="badge" [ngClass]="getCategoryClass(exp.category_name || 'Other')">
+                {{ exp.category_name || 'Other' }}
+              </span>
+            </td>
+            <td><span class="amt">Rs {{ exp.amount | number }}</span></td>
+            <td class="t-muted">{{ exp.date | date:'MMM d' }}</td>
+            <td class="t-muted">{{ exp.description || '-' }}</td>
+            <td>
+              <div class="act-wrap">
+                <button class="act-btn edit-btn"
+                        [class.on]="editingId === exp.id"
+                        (click)="startEdit(exp)" title="Edit">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <path d="M11 2l3 3-9 9H2v-3L11 2z"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <button class="act-btn del-btn"
+                        (click)="deleteExpense(exp.id)" title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Mobile cards ── -->
+  <div class="mob-only mob-list">
+    @if (loading) {
+      <div class="empty-row">Loading...</div>
+    } @else if (displayedExpenses().length === 0) {
+      <div class="empty-row">No expenses found</div>
+    }
+    @for (exp of displayedExpenses(); track exp.id) {
+      <div class="mob-card" [class.mob-editing]="editingId === exp.id">
+        <div class="mob-top">
+          <div class="mob-title-wrap">
+            <span class="mob-title">{{ exp.title }}</span>
+            <span class="badge" [ngClass]="getCategoryClass(exp.category_name || 'Other')">
+              {{ exp.category_name || 'Other' }}
+            </span>
+          </div>
+          <span class="amt">Rs {{ exp.amount | number }}</span>
+        </div>
+        <div class="mob-meta">
+          <div class="mob-field">
+            <span class="mob-lbl">Date</span>
+            <span class="mob-val">{{ exp.date | date:'MMM d' }}</span>
+          </div>
+          <div class="mob-field full" *ngIf="exp.description">
+            <span class="mob-lbl">Description</span>
+            <span class="mob-val">{{ exp.description }}</span>
+          </div>
+        </div>
+        <div class="mob-actions">
+          <button class="mob-btn mob-edit" (click)="startEdit(exp)">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path d="M11 2l3 3-9 9H2v-3L11 2z"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Edit
+          </button>
+          <button class="mob-btn mob-del" (click)="deleteExpense(exp.id)">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ── Modal ── -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="onOverlayClick($event)">
+    <div class="modal-box" [class.edit-mode]="isEditing">
+
+      <div class="modal-head">
+        <div class="modal-head-title">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <ng-container *ngIf="isEditing">
+              <path d="M11 2l3 3-9 9H2v-3L11 2z"
+                    stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            </ng-container>
+            <ng-container *ngIf="!isEditing">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="8" y1="5" x2="8" y2="11"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="5" y1="8" x2="11" y2="8"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </ng-container>
+          </svg>
+          {{ isEditing ? 'Edit Expense' : 'Add Expense' }}
+        </div>
+        <button class="close-modal-btn" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="fld">
+          <label>Title</label>
+          <input [(ngModel)]="formData.title" placeholder="e.g. Lunch at cafe"/>
+        </div>
+        <div class="fld-row">
+          <div class="fld">
+            <label>Amount (Rs)</label>
+            <input [(ngModel)]="formData.amount" type="number" placeholder="0.00"/>
+          </div>
+          <div class="fld">
+            <label>Date</label>
+            <input [(ngModel)]="formData.date" type="date"/>
+          </div>
+        </div>
+        <div class="fld">
+          <label>Category</label>
+          <select [(ngModel)]="formData.category">
+            <option [ngValue]="null">Select category...</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Description</label>
+          <input [(ngModel)]="formData.description" placeholder="Optional note..."/>
+        </div>
+        <div *ngIf="errorMsg" class="error-msg">{{ errorMsg }}</div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-primary"
+                (click)="isEditing ? updateExpense() : addExpense()">
+          {{ isEditing ? 'Update Details' : 'Save Details' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

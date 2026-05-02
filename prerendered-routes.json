@@ -1,0 +1,13 @@
+{
+  "routes": {
+    "/": {},
+    "/ai": {},
+    "/alerts": {},
+    "/budgets": {},
+    "/categories": {},
+    "/dashboard": {},
+    "/expenses": {},
+    "/login": {},
+    "/reports": {}
+  }
+}

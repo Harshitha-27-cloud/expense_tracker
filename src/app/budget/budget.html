@@ -1,0 +1,83 @@
+<div class="budget-container">
+  <div class="header">
+    <h2>BUDGETS</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div>
+        <h3>Budgets</h3>
+        <p class="subtext">Track your monthly budget for {{ monthLabel }} {{ selectedYear }}</p>
+      </div>
+      <button class="add-btn" type="button" (click)="addBudget()" [disabled]="saving">
+        {{ saving ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+
+    <div class="filters">
+      <div class="field">
+        <label>Month</label>
+        <select [(ngModel)]="selectedMonth" (change)="loadBudget()">
+          <option *ngFor="let month of months" [value]="month.value">
+            {{ month.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Year</label>
+        <select [(ngModel)]="selectedYear" (change)="loadBudget()">
+          <option *ngFor="let year of years" [value]="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field budget-input-field">
+      <label>Add Monthly Budget</label>
+      <input
+        type="number"
+        min="0"
+        placeholder="Enter budget amount"
+        [(ngModel)]="budgetInput"
+      />
+    </div>
+
+    <p *ngIf="errorMsg" class="error-msg">{{ errorMsg }}</p>
+
+    <div class="summary-card">
+      <p class="title">Monthly Budget</p>
+      <h1>{{ budgetAmount | currency:'INR':'symbol':'1.0-0' }}</h1>
+    </div>
+
+    <div class="summary-card">
+      <div class="progress-head">
+        <p class="title">Budget Progress</p>
+        <span class="percent">{{ progress | number:'1.0-2' }}%</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress" [style.width.%]="progress"></div>
+      </div>
+
+      <p class="progress-note">Remaining budget percentage out of total monthly budget</p>
+
+      <div class="summary">
+        <div>
+          <p>Spent</p>
+          <h3>{{ spent | currency:'INR':'symbol':'1.0-0' }}</h3>
+        </div>
+        <div>
+          <p>Remaining</p>
+          <h3>{{ displayedRemaining | currency:'INR':'symbol':'1.0-0' }}</h3>
+        </div>
+      </div>
+
+      <p *ngIf="overspentAmount > 0" class="warning-text">
+        Over budget by {{ overspentAmount | currency:'INR':'symbol':'1.0-0' }}
+      </p>
+      <p *ngIf="loading" class="loading-text">Loading budget details...</p>
+    </div>
+  </div>
+</div>

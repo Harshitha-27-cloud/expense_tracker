@@ -1,0 +1,77 @@
+<!-- Hamburger button — mobile only -->
+<button class="hamburger-btn" (click)="toggleSidebar()" [class.open]="isOpen" aria-label="Toggle menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- Overlay backdrop -->
+<div class="sidebar-overlay" [class.visible]="isOpen" (click)="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" [class.open]="isOpen">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 19V9M12 19V5M19 19v-8M3 19h18"></path>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span>Expense</span>
+      <span>Tracker</span>
+    </div>
+  </div>
+
+  <ul class="menu">
+    <li
+      *ngFor="let item of menuItems"
+      routerLinkActive="active"
+      [routerLink]="item.route"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="onItemClick(item)"
+    >
+      <span class="menu-icon" [ngSwitch]="item.icon">
+        <svg *ngSwitchCase="'receipt'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 4h10l4 4v12H5z"></path>
+          <path d="M15 4v4h4"></path>
+        </svg>
+        <svg *ngSwitchCase="'folder'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 7h6l2 2h10v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <path d="M3 7V6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <svg *ngSwitchCase="'account_balance'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 10h18"></path>
+          <path d="M5 10V7h14v3"></path>
+          <path d="M6 10v8M12 10v8M18 10v8"></path>
+          <path d="M4 18h16"></path>
+          <path d="M12 3 3 7h18z"></path>
+        </svg>
+        <svg *ngSwitchCase="'bar_chart'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 19V9M12 19V5M19 19v-8M3 19h18"></path>
+        </svg>
+        <svg *ngSwitchCase="'smart_toy'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 3h6v3H9zM6 8h12v8H6zM9 16v5M15 16v5M3 11h3M18 11h3"></path>
+        </svg>
+        <svg *ngSwitchCase="'notifications'" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 4a4 4 0 0 0-4 4v1a7 7 0 0 1-2 5v2h12v-2a7 7 0 0 1-2-5V8a4 4 0 0 0-4-4Z"></path>
+          <path d="M10 19a2 2 0 0 0 4 0"></path>
+        </svg>
+        <svg *ngSwitchDefault viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"></path>
+        </svg>
+      </span>
+      <span class="menu-text">{{ item.name }}</span>
+    </li>
+  </ul>
+
+  <div class="logout" (click)="logout()">
+    <span class="menu-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 17l5-5-5-5"></path>
+        <path d="M15 12H3"></path>
+        <path d="M21 21V3"></path>
+      </svg>
+    </span>
+    <span>Logout</span>
+  </div>
+</div>

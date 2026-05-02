@@ -1,0 +1,39 @@
+<div class="report-container">
+  <h2>Monthly Report</h2>
+
+  <!-- Filters — all in one row -->
+  <div class="filters">
+    <label>Month</label>
+    <select [(ngModel)]="month">
+      <option *ngFor="let m of months" [value]="m.value">{{ m.label }}</option>
+    </select>
+    <label>Year</label>
+    <select [(ngModel)]="year">
+      <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+    </select>
+    <button (click)="loadReport()">Generate</button>
+  </div>
+
+  <!-- Budget Summary -->
+  <div class="summary-grid" *ngIf="budgetSummary">
+    <div class="scard"><span class="lbl">Total budget</span><span class="val budget">₹{{ budgetSummary.budget_amount | number }}</span></div>
+    <div class="scard"><span class="lbl">Spent</span><span class="val spent">₹{{ budgetSummary.spent | number }}</span></div>
+    <div class="scard"><span class="lbl">Remaining</span><span class="val remaining">₹{{ budgetSummary.remaining | number }}</span></div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-grid">
+    <table>
+      <thead><tr><th>Category</th><th>Total Amount (₹)</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let item of reportData; let i = index">
+          <td><span class="dot" [style.background]="colors[i]"></span>{{ item.category__name }}</td>
+          <td>₹{{ item.total | number }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="chart-box">
+      <canvas id="reportChart"></canvas>
+    </div>
+  </div>
+</div>

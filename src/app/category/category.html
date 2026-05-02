@@ -1,0 +1,107 @@
+<section class="category-container">
+  <div class="header">
+    <div>
+      <h2>Categories</h2>
+      <p class="sub">
+        All categories
+        <span class="badge">{{ categories.length }}</span>
+      </p>
+    </div>
+
+    <button class="add-btn" type="button" (click)="openModal()">+ Add Category</button>
+  </div>
+
+  <p *ngIf="errorMsg && !showModal" class="error-banner">{{ errorMsg }}</p>
+
+  <div *ngIf="toastMessage" class="toast-wrap">
+    <div class="toast" [class.error-toast]="toastType === 'error'">
+      <span>{{ toastMessage }}</span>
+      <button type="button" (click)="closeToast()">OK</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Category Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let cat of categories; trackBy: trackByCategoryId">
+          <td>{{ cat.id }}</td>
+          <td>{{ cat.name }}</td>
+          <td>
+            <div class="act-wrap">
+
+                <!-- EDIT -->
+                <button class="act-btn edit-btn"
+                        (click)="editCategory(cat)"
+                        title="Edit">
+
+                <svg viewBox="0 0 16 16">
+                    <path d="M11 2l3 3-9 9H2v-3L11 2z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                </svg>
+
+                </button>
+
+                <!-- DELETE -->
+                <button class="act-btn del-btn"
+                        (click)="deleteCategory(cat.id)"
+                        title="Delete">
+
+                <svg viewBox="0 0 16 16">
+                    <path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8l1-10"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                </svg>
+
+                </button>
+
+            </div>
+            </td>
+        </tr>
+
+        <tr *ngIf="loading">
+          <td colspan="3" class="empty">Loading categories...</td>
+        </tr>
+
+        <tr *ngIf="!loading && categories.length === 0">
+          <td colspan="3" class="empty">No categories found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="showModal" class="modal-backdrop">
+    <div class="modal">
+      <h3>{{ editMode ? 'Edit Category' : 'Add Category' }}</h3>
+
+      <label for="categoryName">Category Name</label>
+      <input
+        id="categoryName"
+        type="text"
+        [(ngModel)]="categoryName"
+        placeholder="Enter category name"
+      />
+
+      <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+
+      <div class="modal-actions">
+        <button class="cancel" type="button" (click)="closeModal()">Cancel</button>
+        <button class="save" type="button" (click)="saveCategory()">
+          {{ editMode ? 'Update' : 'Save Details' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

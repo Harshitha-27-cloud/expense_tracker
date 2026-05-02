@@ -1,0 +1,153 @@
+<!-- Budget Alert Page Wrapper -->
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-accent"></div>
+    <h1 class="page-title">Budget Alert</h1>
+    <p class="page-subtitle">{{ today | date: 'MMMM yyyy' }}</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="state-card" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p class="state-text">Checking your budget...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="state-card error-card" *ngIf="error && !isLoading">
+    <span class="state-icon">⚠️</span>
+    <p class="state-text">{{ error }}</p>
+    <button class="btn-retry" (click)="loadAlert()">Retry</button>
+  </div>
+
+  <!-- No Alert State -->
+  <div class="state-card success-card" *ngIf="!isLoading && !error && !showAlert">
+    <div class="success-ring">
+      <span class="state-icon">✓</span>
+    </div>
+    <p class="state-title">You're on track!</p>
+    <p class="state-text">Your spending is within the monthly budget.</p>
+  </div>
+
+  <!-- Budget Exceeded Alert Card -->
+  <div class="alert-card" *ngIf="!isLoading && showAlert && alertData?.show" [@fadeIn]>
+    <!-- Dismiss button -->
+    <button class="btn-dismiss" (click)="onDismissAlert()" title="Dismiss">✕</button>
+
+    <!-- Bell icon with pulse animation -->
+    <div class="alert-icon-wrapper">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring delay"></div>
+      <div class="bell-icon">🔔</div>
+    </div>
+
+    <!-- Alert Label -->
+    <div class="alert-badge">Budget Exceeded!</div>
+
+    <!-- Message -->
+    <p class="alert-message">You have exceeded your monthly budget.</p>
+
+    <!-- Spent vs Budget -->
+    <div class="amount-grid">
+      <div class="amount-block spent-block">
+        <span class="amount-label">Spent</span>
+        <span class="amount-value spent-value">{{ formatCurrency(alertData?.spent) }}</span>
+      </div>
+      <div class="amount-divider"></div>
+      <div class="amount-block budget-block">
+        <span class="amount-label">Budget</span>
+        <span class="amount-value budget-value">{{ formatCurrency(alertData?.budget) }}</span>
+      </div>
+    </div>
+
+    <!-- Over budget pill -->
+    <div class="over-budget-pill">
+      <span class="over-icon">▲</span>
+      Over by {{ formatCurrency(overBudgetAmount) }}
+    </div>
+
+    <!-- View Details Button -->
+    <button class="btn-view-details" (click)="onViewDetails()">
+      <span>View Details</span>
+      <span class="btn-arrow">→</span>
+    </button>
+  </div>
+
+  <!-- ===== DETAILS PANEL ===== -->
+  <div class="details-overlay" *ngIf="showDetails" (click)="onCloseDetails()"></div>
+
+  <div class="details-panel" *ngIf="showDetails">
+    <!-- Panel Header -->
+    <div class="panel-header">
+      <h2 class="panel-title">Budget Summary</h2>
+      <button class="btn-close-panel" (click)="onCloseDetails()">✕</button>
+    </div>
+
+    <!-- Loading summary -->
+    <div class="panel-loading" *ngIf="!summaryData">
+      <div class="spinner small"></div>
+      <span>Loading details...</span>
+    </div>
+
+    <!-- Summary Content -->
+    <div class="panel-body" *ngIf="summaryData">
+
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">Budget Used</span>
+          <span class="progress-percent" [style.color]="progressColor">
+            {{ progressPercent | number:'1.0-0' }}%
+          </span>
+        </div>
+        <div class="progress-track">
+          <div
+            class="progress-fill"
+            [style.width.%]="progressPercent"
+            [style.background]="progressColor">
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <span class="stat-label">Monthly Budget</span>
+          <span class="stat-value neutral">{{ formatCurrency(summaryData.budget_amount) }}</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Total Spent</span>
+          <span class="stat-value danger">{{ formatCurrency(summaryData.spent) }}</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Remaining</span>
+          <span class="stat-value"
+            [class.danger]="summaryData.remaining < 0"
+            [class.safe]="summaryData.remaining >= 0">
+            {{ formatCurrency(summaryData.remaining) }}
+          </span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Period</span>
+          <span class="stat-value neutral">
+            {{ summaryData.month }}/{{ summaryData.year }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Exceeded Warning Banner -->
+      <div class="exceeded-banner" *ngIf="summaryData.remaining < 0">
+        <span class="banner-icon">🚨</span>
+        <div>
+          <p class="banner-title">Budget Limit Crossed</p>
+          <p class="banner-sub">You've overspent by {{ formatCurrency(-summaryData.remaining) }} this month.</p>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <button class="btn-close-full" (click)="onCloseDetails()">Close</button>
+    </div>
+  </div>
+
+</div>

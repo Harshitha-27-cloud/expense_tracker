@@ -1,0 +1,49 @@
+<div class="shell">
+  <app-sidebar
+    class="shell-sidebar"
+    [class.mobile-open]="mobileMenuOpen"
+    (itemSelected)="closeMobileMenu()"
+  />
+
+  <div
+    class="sidebar-overlay"
+    [class.visible]="mobileMenuOpen"
+    (click)="closeMobileMenu()"
+  ></div>
+
+  <div class="shell-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" type="button" (click)="toggleMobileMenu()" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <h1>{{ currentTitle }}</h1>
+      </div>
+
+      <div class="topbar-right">
+        <button class="icon-btn" type="button" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3a4 4 0 0 0-4 4v1.1A7 7 0 0 1 6 13v3h12v-3a7 7 0 0 1-2-4.9V7a4 4 0 0 0-4-4Z"
+            />
+            <path d="M10 19a2 2 0 0 0 4 0" />
+          </svg>
+          <span class="badge">3</span>
+        </button>
+
+        <div class="user-chip">
+          <span class="avatar">{{ userInitial }}</span>
+          <span class="name">{{ userName }}</span>
+        </div>
+
+        <button class="logout-link" type="button" (click)="logout()">Logout</button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet />
+    </main>
+  </div>
+</div>

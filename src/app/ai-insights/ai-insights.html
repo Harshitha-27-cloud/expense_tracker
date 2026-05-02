@@ -1,0 +1,67 @@
+<!-- ai-insights.component.html -->
+<div class="ai-insights-card">
+
+  <!-- Header -->
+  <div class="card-header">
+    <div class="robot-icon-wrap" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="8" width="18" height="13" rx="3"/>
+        <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+        <circle cx="9"  cy="14" r="1.2" fill="currentColor"/>
+        <circle cx="15" cy="14" r="1.2" fill="currentColor"/>
+        <path d="M9 18h6"/>
+        <line x1="12" y1="3" x2="12" y2="4"/>
+      </svg>
+    </div>
+
+    <div class="header-text">
+      <h3 class="card-title">AI Insight</h3>
+      <span class="period-label" *ngIf="periodLabel">{{ periodLabel }}</span>
+    </div>
+
+    <button class="refresh-icon-btn"
+            (click)="loadInsights()"
+            [disabled]="loading"
+            aria-label="Refresh insights">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round"
+           [class.spinning]="loading">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state" role="status" aria-live="polite">
+    <div class="loading-spinner"></div>
+    <span>Loading insights…</span>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="error-state">
+    <span>⚠️</span> Could not load insights. Please try again.
+  </div>
+
+  <!-- Insights list -->
+  <ul *ngIf="!loading && !error && insights.length" class="insights-list">
+    <li class="insight-item" *ngFor="let item of insights">
+      <span class="insight-emoji" aria-hidden="true">{{ item.icon }}</span>
+      <span class="insight-text" [innerHTML]="item.text"></span>
+    </li>
+  </ul>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && !insights.length" class="empty-state">
+    No insights available for this period.
+  </div>
+
+  <!-- CTA -->
+  <button class="view-all-btn" (click)="viewAllInsights()" [disabled]="loading">
+    View All Insights
+  </button>
+
+</div>

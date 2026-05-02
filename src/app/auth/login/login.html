@@ -1,0 +1,113 @@
+<div class="scene">
+  <svg class="stars-svg" #starsSvg viewBox="0 0 800 300" preserveAspectRatio="xMidYMid slice"></svg>
+
+  <svg class="mountains" viewBox="0 0 800 280" preserveAspectRatio="none">
+    <polygon points="0,280 0,170 100,80 200,155 330,50 450,130 570,40 680,110 800,65 800,280" fill="#4a0d8a"/>
+    <polygon points="0,280 0,210 70,155 170,185 280,120 390,165 490,100 610,150 720,105 800,130 800,280" fill="#6b21a8"/>
+    <polygon points="0,280 50,260 120,240 200,255 300,235 420,250 520,230 640,248 750,232 800,245 800,280" fill="#3b0764"/>
+    <g fill="#1a0333">
+      <rect x="15" y="190" width="16" height="90" rx="2"/><polygon points="23,163 13,192 33,192"/>
+      <rect x="44" y="200" width="12" height="80" rx="2"/><polygon points="50,175 42,202 58,202"/>
+      <rect x="72" y="185" width="18" height="95" rx="2"/><polygon points="81,156 70,187 92,187"/>
+      <rect x="110" y="195" width="14" height="85" rx="2"/><polygon points="117,168 108,197 126,197"/>
+      <rect x="620" y="188" width="16" height="92" rx="2"/><polygon points="628,162 618,190 638,190"/>
+      <rect x="652" y="196" width="12" height="84" rx="2"/><polygon points="658,172 650,198 666,198"/>
+      <rect x="682" y="183" width="18" height="97" rx="2"/><polygon points="691,155 680,185 702,185"/>
+      <rect x="718" y="193" width="14" height="87" rx="2"/><polygon points="725,167 716,195 734,195"/>
+      <rect x="750" y="199" width="12" height="81" rx="2"/><polygon points="756,175 748,201 764,201"/>
+    </g>
+  </svg>
+
+  <div class="glass" [class.register-open]="isRegisterMode">
+
+    <!-- TAB SWITCHER -->
+    <div class="mode-tabs">
+      <button class="tab" [class.active]="!isRegisterMode" (click)="switchMode(false)">Login</button>
+      <button class="tab" [class.active]="isRegisterMode"  (click)="switchMode(true)">Register</button>
+    </div>
+
+    <div class="alert alert-error"   *ngIf="errorMsg">{{ errorMsg }}</div>
+    <div class="alert alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+
+    <!-- USERNAME -->
+    <div class="field">
+      <input [(ngModel)]="form.username" placeholder="Username" autocomplete="off"
+             (keyup.enter)="isRegisterMode ? register() : login()"/>
+      <span class="field-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="field" *ngIf="isRegisterMode">
+      <input [(ngModel)]="form.email" type="email" placeholder="Email"/>
+      <span class="field-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- DATE OF BIRTH -->
+    <div class="field" *ngIf="isRegisterMode">
+      <input [(ngModel)]="form.date_of_birth" type="date" class="date-input"/>
+      <span class="field-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- PHONE -->
+    <div class="field" *ngIf="isRegisterMode">
+      <input [(ngModel)]="form.contact_number" type="tel" placeholder="Phone number"/>
+      <span class="field-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 3.08 4.18 2 2 0 0 1 5.09 2h3a2 2 0 0 1 2 1.72c.13.81.33 1.6.57 2.37a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.77.24 1.56.44 2.37.57A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="field">
+      <input [(ngModel)]="form.password"
+             [type]="showPassword ? 'text' : 'password'"
+             placeholder="Password"
+             (keyup.enter)="isRegisterMode ? register() : login()"/>
+      <span class="field-icon toggle-pw" (click)="showPassword = !showPassword">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+          <circle cx="12" cy="12" r="3"/>
+          <line *ngIf="showPassword" x1="3" y1="3" x2="21" y2="21" stroke="white" stroke-width="1.6"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- REMEMBER ME -->
+    <div class="row" *ngIf="!isRegisterMode">
+      <label class="remember">
+        <input type="checkbox" [(ngModel)]="rememberMe"/> Remember me
+      </label>
+      <a class="forgot" href="#">Forgot password?</a>
+    </div>
+
+    <!-- BUTTON -->
+    <button class="btn-login" (click)="isRegisterMode ? register() : login()" [disabled]="loading">
+      <span *ngIf="!loading">{{ isRegisterMode ? 'Save & Register' : 'Login' }}</span>
+      <span *ngIf="loading" class="spinner-row">
+        <span class="spinner"></span>
+        {{ isRegisterMode ? 'Registering…' : 'Logging in…' }}
+      </span>
+    </button>
+
+    <p class="register-row" *ngIf="!isRegisterMode">
+      Don't have an account? <a (click)="switchMode(true)">Register</a>
+    </p>
+    <p class="register-row" *ngIf="isRegisterMode">
+      Already have an account? <a (click)="switchMode(false)">Login</a>
+    </p>
+
+  </div>
+</div>
